@@ -43,7 +43,13 @@ ASSIGNMENT_OPERATOR: ':=';
 
 
 
-
 //--- PARSER: ---
-stylesheet: EOF;
+stylesheet: stylerule* EOF;
+stylerule: selector OPEN_BRACE declaration+ CLOSE_BRACE;
 
+selector: ID_IDENT | CLASS_IDENT | LOWER_IDENT;
+
+declaration: (sizeDeclaration | colorDeclaration) SEMICOLON;
+sizeDeclaration: ('width' | 'height') COLON size;
+size: PIXELSIZE | PERCENTAGE;
+colorDeclaration: ('color' | 'background-color') COLON COLOR;
