@@ -49,7 +49,7 @@ ASSIGNMENT_OPERATOR: ':=';
 
 
 //--- PARSER: ---
-stylesheet: variable* stylerule* EOF;
+stylesheet: (variable | stylerule)* EOF;
 stylerule: tagSelector OPEN_BRACE (ifClause | variable | declaration)* CLOSE_BRACE;
 
 tagSelector: ID_IDENT | CLASS_IDENT | LOWER_IDENT;
