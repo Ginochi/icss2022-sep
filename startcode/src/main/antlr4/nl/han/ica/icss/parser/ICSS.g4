@@ -16,6 +16,11 @@ PIXELSIZE: [0-9]+ 'px';
 PERCENTAGE: [0-9]+ '%';
 SCALAR: [0-9]+;
 
+//Declaration types:
+WIDTH_DEC: 'width';
+HEIGHT_DEC: 'height';
+COLOR_DEC: 'color';
+BACKGROUNDCOLOR_DEC: 'background-color';
 
 //Color value takes precedence over id idents
 COLOR: '#' [0-9a-f] [0-9a-f] [0-9a-f] [0-9a-f] [0-9a-f] [0-9a-f];
@@ -44,12 +49,21 @@ ASSIGNMENT_OPERATOR: ':=';
 
 
 //--- PARSER: ---
-stylesheet: stylerule* EOF;
-stylerule: selector OPEN_BRACE declaration+ CLOSE_BRACE;
+stylesheet: variable* stylerule* EOF;
+stylerule: tagSelector OPEN_BRACE ifExpression* variable* declaration* CLOSE_BRACE;
 
-selector: ID_IDENT | CLASS_IDENT | LOWER_IDENT;
+tagSelector: ID_IDENT | CLASS_IDENT | LOWER_IDENT;
+
+ifExpression: IF BOX_BRACKET_OPEN (bool | variableName) BOX_BRACKET_CLOSE OPEN_BRACE ifBody CLOSE_BRACE (ELSE OPEN_BRACE ifBody CLOSE_BRACE)?;
+ifBody: ifExpression*;
+
+variable: variableName ASSIGNMENT_OPERATOR (literal | variableName) SEMICOLON;
+variableName: CAPITAL_IDENT;
 
 declaration: (sizeDeclaration | colorDeclaration) SEMICOLON;
-sizeDeclaration: ('width' | 'height') COLON size;
+sizeDeclaration: (WIDTH_DEC | HEIGHT_DEC) COLON (size | variableName);
+colorDeclaration: (COLOR_DEC | BACKGROUNDCOLOR_DEC) COLON (COLOR | variableName);
+
+literal: size | COLOR | bool;
 size: PIXELSIZE | PERCENTAGE;
-colorDeclaration: ('color' | 'background-color') COLON COLOR;
+bool: TRUE | FALSE;
