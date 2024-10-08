@@ -2,7 +2,7 @@ package nl.han.ica.datastructures;
 
 public class HANLinkedList<T> implements IHANLinkedList<T> {
 
-    ListNode<T> head;
+    ListNode<T> head = new ListNode<>(null, null);
     int size = 0;
 
     @Override

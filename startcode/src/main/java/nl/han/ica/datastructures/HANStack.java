@@ -1,7 +1,7 @@
 package nl.han.ica.datastructures;
 
 public class HANStack<T> implements IHANStack<T> {
-    HANLinkedList<T> list;
+    HANLinkedList<T> list = new HANLinkedList<>();
 
     @Override
     public void push(T value) {
