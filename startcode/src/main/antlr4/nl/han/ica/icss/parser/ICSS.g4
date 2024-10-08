@@ -49,19 +49,19 @@ ASSIGNMENT_OPERATOR: ':=';
 
 
 //--- PARSER: ---
-stylesheet: (variable | stylerule)* EOF;
-stylerule: tagSelector OPEN_BRACE (ifClause | variable | declaration)* CLOSE_BRACE;
+stylesheet: (stylerule | variable)* EOF;
+stylerule: tagSelector OPEN_BRACE (declaration | variable | ifClause)* CLOSE_BRACE;
 
 tagSelector: ID_IDENT | CLASS_IDENT | LOWER_IDENT;
 
 ifClause: IF expression ifBody elseClause?;
 elseClause: ELSE ifBody;
 expression: BOX_BRACKET_OPEN (bool | variableReference) BOX_BRACKET_CLOSE;
-ifBody: OPEN_BRACE (ifClause | declaration)* CLOSE_BRACE;
+ifBody: OPEN_BRACE (declaration | ifClause)* CLOSE_BRACE;
 
 variable: variableReference ASSIGNMENT_OPERATOR variableAssignment SEMICOLON;
 variableReference: CAPITAL_IDENT;
-variableAssignment: literal | variableReference;
+variableAssignment: propertyValue;
 
 declaration: propertyName COLON propertyValue SEMICOLON;
 propertyName: WIDTH_PROP | HEIGHT_PROP | COLOR_PROP | BGCOLOR_PROP;
