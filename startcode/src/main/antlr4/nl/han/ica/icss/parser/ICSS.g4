@@ -55,7 +55,7 @@ stylerule: tagSelector OPEN_BRACE ifExpression* variable* declaration* CLOSE_BRA
 tagSelector: ID_IDENT | CLASS_IDENT | LOWER_IDENT;
 
 ifExpression: IF BOX_BRACKET_OPEN (bool | variableName) BOX_BRACKET_CLOSE OPEN_BRACE ifBody CLOSE_BRACE (ELSE OPEN_BRACE ifBody CLOSE_BRACE)?;
-ifBody: ifExpression*;
+ifBody: ifExpression* declaration*;
 
 variable: variableName ASSIGNMENT_OPERATOR (literal | variableName) SEMICOLON;
 variableName: CAPITAL_IDENT;
