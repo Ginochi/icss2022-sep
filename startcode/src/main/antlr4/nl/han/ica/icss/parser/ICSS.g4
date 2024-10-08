@@ -16,11 +16,11 @@ PIXELSIZE: [0-9]+ 'px';
 PERCENTAGE: [0-9]+ '%';
 SCALAR: [0-9]+;
 
-//Declaration types:
-WIDTH_DEC: 'width';
-HEIGHT_DEC: 'height';
-COLOR_DEC: 'color';
-BACKGROUNDCOLOR_DEC: 'background-color';
+//Property types:
+WIDTH_PROP: 'width';
+HEIGHT_PROP: 'height';
+COLOR_PROP: 'color';
+BGCOLOR_PROP: 'background-color';
 
 //Color value takes precedence over id idents
 COLOR: '#' [0-9a-f] [0-9a-f] [0-9a-f] [0-9a-f] [0-9a-f] [0-9a-f];
@@ -50,20 +50,24 @@ ASSIGNMENT_OPERATOR: ':=';
 
 //--- PARSER: ---
 stylesheet: variable* stylerule* EOF;
-stylerule: tagSelector OPEN_BRACE ifExpression* variable* declaration* CLOSE_BRACE;
+stylerule: tagSelector OPEN_BRACE (ifClause | variable | declaration)* CLOSE_BRACE;
 
 tagSelector: ID_IDENT | CLASS_IDENT | LOWER_IDENT;
 
-ifExpression: IF BOX_BRACKET_OPEN (bool | variableName) BOX_BRACKET_CLOSE OPEN_BRACE ifBody CLOSE_BRACE (ELSE OPEN_BRACE ifBody CLOSE_BRACE)?;
-ifBody: ifExpression* declaration*;
+ifClause: IF expression ifBody elseClause?;
+elseClause: ELSE ifBody;
+expression: BOX_BRACKET_OPEN (bool | variableReference) BOX_BRACKET_CLOSE;
+ifBody: OPEN_BRACE (ifClause | declaration)* CLOSE_BRACE;
 
-variable: variableName ASSIGNMENT_OPERATOR (literal | variableName) SEMICOLON;
-variableName: CAPITAL_IDENT;
+variable: variableReference ASSIGNMENT_OPERATOR variableAssignment SEMICOLON;
+variableReference: CAPITAL_IDENT;
+variableAssignment: literal | variableReference;
 
-declaration: (sizeDeclaration | colorDeclaration) SEMICOLON;
-sizeDeclaration: (WIDTH_DEC | HEIGHT_DEC) COLON (size | variableName);
-colorDeclaration: (COLOR_DEC | BACKGROUNDCOLOR_DEC) COLON (COLOR | variableName);
+declaration: propertyName COLON propertyValue SEMICOLON;
+propertyName: WIDTH_PROP | HEIGHT_PROP | COLOR_PROP | BGCOLOR_PROP;
+propertyValue: literal | variableReference;
 
-literal: size | COLOR | bool;
+literal: size | color | bool;
 size: PIXELSIZE | PERCENTAGE;
+color: COLOR;
 bool: TRUE | FALSE;
