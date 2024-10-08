@@ -50,9 +50,12 @@ ASSIGNMENT_OPERATOR: ':=';
 
 //--- PARSER: ---
 stylesheet: (stylerule | variable)* EOF;
-stylerule: tagSelector OPEN_BRACE (declaration | variable | ifClause)* CLOSE_BRACE;
+stylerule: selector OPEN_BRACE (declaration | variable | ifClause)* CLOSE_BRACE;
 
-tagSelector: ID_IDENT | CLASS_IDENT | LOWER_IDENT;
+selector: tagSelector | idSelector | classSelector;
+tagSelector: LOWER_IDENT;
+idSelector: ID_IDENT;
+classSelector: CLASS_IDENT;
 
 ifClause: IF expression ifBody elseClause?;
 elseClause: ELSE ifBody;
