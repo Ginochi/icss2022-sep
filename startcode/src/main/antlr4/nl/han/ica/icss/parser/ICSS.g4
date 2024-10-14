@@ -57,20 +57,26 @@ tagSelector: LOWER_IDENT;
 idSelector: ID_IDENT;
 classSelector: CLASS_IDENT;
 
-ifClause: IF expression ifBody elseClause?;
-elseClause: ELSE ifBody;
-expression: BOX_BRACKET_OPEN (bool | variableReference) BOX_BRACKET_CLOSE;
-ifBody: OPEN_BRACE (declaration | ifClause)* CLOSE_BRACE;
+declaration: propertyName COLON propertyValue SEMICOLON;
+propertyName: WIDTH_PROP | HEIGHT_PROP | COLOR_PROP | BGCOLOR_PROP;
+propertyValue: value | variableReference;
 
 variable: variableReference ASSIGNMENT_OPERATOR variableAssignment SEMICOLON;
 variableReference: CAPITAL_IDENT;
 variableAssignment: propertyValue;
 
-declaration: propertyName COLON propertyValue SEMICOLON;
-propertyName: WIDTH_PROP | HEIGHT_PROP | COLOR_PROP | BGCOLOR_PROP;
-propertyValue: literal | variableReference;
+ifClause: IF expression ifBody elseClause?;
+elseClause: ELSE ifBody;
+expression: BOX_BRACKET_OPEN (bool | variableReference) BOX_BRACKET_CLOSE;
+ifBody: OPEN_BRACE (declaration | ifClause)* CLOSE_BRACE;
 
-literal: size | color | bool;
-size: PIXELSIZE | PERCENTAGE;
+value: size | color | bool;
+size: sizeCalc | sizeLiteral;
+sizeLiteral: PIXELSIZE | PERCENTAGE;
 color: COLOR;
 bool: TRUE | FALSE;
+
+sizeCalc: sizeCalc (MUL) sizeCalc |
+            sizeCalc (PLUS) sizeCalc |
+            sizeCalc (MIN) sizeCalc |
+            sizeLiteral | SCALAR;
