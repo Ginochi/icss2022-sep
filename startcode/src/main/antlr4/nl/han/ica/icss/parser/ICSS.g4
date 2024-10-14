@@ -67,16 +67,16 @@ variableAssignment: propertyValue;
 
 ifClause: IF expression ifBody elseClause?;
 elseClause: ELSE ifBody;
-expression: BOX_BRACKET_OPEN (bool | variableReference) BOX_BRACKET_CLOSE;
+expression: BOX_BRACKET_OPEN (boolLiteral | variableReference) BOX_BRACKET_CLOSE;
 ifBody: OPEN_BRACE (declaration | ifClause)* CLOSE_BRACE;
 
-value: size | color | bool;
-size: sizeCalc | sizeLiteral;
-sizeLiteral: PIXELSIZE | PERCENTAGE;
-color: COLOR;
-bool: TRUE | FALSE;
+value: size | colorLiteral | boolLiteral;
+size: sizeCalc | pixelLiteral | percentageLiteral;
+pixelLiteral: PIXELSIZE;
+percentageLiteral: PERCENTAGE;
+colorLiteral: COLOR;
+boolLiteral: TRUE | FALSE;
 
 sizeCalc: sizeCalc (MUL) sizeCalc |
-            sizeCalc (PLUS) sizeCalc |
-            sizeCalc (MIN) sizeCalc |
-            sizeLiteral | SCALAR;
+            sizeCalc (PLUS | MIN) sizeCalc |
+            pixelLiteral | percentageLiteral | SCALAR;
