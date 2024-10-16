@@ -59,9 +59,9 @@ classSelector: CLASS_IDENT;
 
 declaration: propertyName COLON propertyValue SEMICOLON;
 propertyName: WIDTH_PROP | HEIGHT_PROP | COLOR_PROP | BGCOLOR_PROP;
-propertyValue: value | variableReference;
+propertyValue: literal | variableReference | operation;
 
-variableAssignment: variableReference ASSIGNMENT_OPERATOR (value | variableReference)* SEMICOLON;
+variableAssignment: variableReference ASSIGNMENT_OPERATOR propertyValue SEMICOLON;
 variableReference: CAPITAL_IDENT;
 
 ifClause: IF boolExpression ifBody elseClause?;
@@ -69,13 +69,13 @@ elseClause: ELSE ifBody;
 boolExpression: BOX_BRACKET_OPEN (boolLiteral | variableReference) BOX_BRACKET_CLOSE;
 ifBody: OPEN_BRACE (declaration | ifClause)* CLOSE_BRACE;
 
-value: size | colorLiteral | boolLiteral;
-size: sizeCalc | pixelLiteral | percentageLiteral;
+literal: pixelLiteral | percentageLiteral | colorLiteral | boolLiteral;
 pixelLiteral: PIXELSIZE;
 percentageLiteral: PERCENTAGE;
 colorLiteral: COLOR;
 boolLiteral: TRUE | FALSE;
 
-sizeCalc: sizeCalc (MUL) sizeCalc |
-            sizeCalc (PLUS | MIN) sizeCalc |
-            pixelLiteral | percentageLiteral | SCALAR;
+operation: operation MUL operation #mulOperation |
+            operation PLUS operation #plusOperation |
+            operation MIN operation #minOperation |
+            variableReference | pixelLiteral | percentageLiteral | SCALAR;

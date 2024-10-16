@@ -2,6 +2,7 @@ package nl.han.ica.icss.generator;
 
 
 import nl.han.ica.icss.ast.AST;
+import nl.han.ica.icss.ast.ASTNode;
 import nl.han.ica.icss.ast.Stylerule;
 import nl.han.ica.icss.ast.Stylesheet;
 
@@ -17,9 +18,13 @@ public class Generator {
 
 	private String generateStylerule(Stylerule stylerule) {
 		String result = stylerule.selectors.get(0) + " {\n";
-		//result += "\t" + generateDeclaration(stylerule.body.get(0));
+		result += "\t" + generateDeclaration(stylerule.body.get(0));
 		result += "\n}";
 		return result;
+	}
+
+	private String generateDeclaration(ASTNode astNode) {
+		return null;
 	}
 
 

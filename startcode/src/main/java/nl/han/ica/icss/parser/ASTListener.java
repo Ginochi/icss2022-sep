@@ -190,8 +190,13 @@ public class ASTListener extends ICSSBaseListener {
 		currentContainer.peek().addChild(boolLiteral);
 	}
 
-	@Override public void enterSizeCalc(ICSSParser.SizeCalcContext ctx) { }
+	@Override
+	public void enterOperation(ICSSParser.OperationContext ctx) {
+		System.out.println(ctx.operation());
+	}
 
-	@Override public void exitSizeCalc(ICSSParser.SizeCalcContext ctx) { }
+	@Override
+	public void exitOperation(ICSSParser.OperationContext ctx) {
 
+	}
 }
