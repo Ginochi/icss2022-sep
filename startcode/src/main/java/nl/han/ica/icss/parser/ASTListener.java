@@ -4,6 +4,10 @@ package nl.han.ica.icss.parser;
 import nl.han.ica.datastructures.HANStack;
 import nl.han.ica.datastructures.IHANStack;
 import nl.han.ica.icss.ast.*;
+import nl.han.ica.icss.ast.literals.BoolLiteral;
+import nl.han.ica.icss.ast.literals.ColorLiteral;
+import nl.han.ica.icss.ast.literals.PercentageLiteral;
+import nl.han.ica.icss.ast.literals.PixelLiteral;
 import nl.han.ica.icss.ast.selectors.ClassSelector;
 import nl.han.ica.icss.ast.selectors.IdSelector;
 import nl.han.ica.icss.ast.selectors.TagSelector;
@@ -97,4 +101,97 @@ public class ASTListener extends ICSSBaseListener {
 		Declaration declaration = (Declaration) currentContainer.pop();
 		currentContainer.peek().addChild(declaration);
 	}
+
+	@Override
+	public void enterPropertyName(ICSSParser.PropertyNameContext ctx) {
+		PropertyName propertyName = new PropertyName(ctx.getText());
+		currentContainer.push(propertyName);
+	}
+
+	@Override
+	public void exitPropertyName(ICSSParser.PropertyNameContext ctx) {
+		PropertyName propertyName = (PropertyName) currentContainer.pop();
+		currentContainer.peek().addChild(propertyName);
+	}
+
+	@Override public void enterVariableAssignment(ICSSParser.VariableAssignmentContext ctx) {
+		VariableAssignment variableAssignment = new VariableAssignment();
+		currentContainer.push(variableAssignment);
+	}
+
+	@Override public void exitVariableAssignment(ICSSParser.VariableAssignmentContext ctx) {
+		VariableAssignment variableAssignment = (VariableAssignment) currentContainer.pop();
+		currentContainer.peek().addChild(variableAssignment);
+	}
+
+	@Override public void enterVariableReference(ICSSParser.VariableReferenceContext ctx) {
+		VariableReference variableReference = new VariableReference(ctx.getText());
+		currentContainer.push(variableReference);
+	}
+
+	@Override public void exitVariableReference(ICSSParser.VariableReferenceContext ctx) {
+		VariableReference variableReference = (VariableReference) currentContainer.pop();
+		currentContainer.peek().addChild(variableReference);
+	}
+
+	@Override public void enterIfClause(ICSSParser.IfClauseContext ctx) { }
+
+	@Override public void exitIfClause(ICSSParser.IfClauseContext ctx) { }
+
+	@Override public void enterElseClause(ICSSParser.ElseClauseContext ctx) { }
+
+	@Override public void exitElseClause(ICSSParser.ElseClauseContext ctx) { }
+
+	@Override public void enterBoolExpression(ICSSParser.BoolExpressionContext ctx) { }
+
+	@Override public void exitBoolExpression(ICSSParser.BoolExpressionContext ctx) { }
+
+	@Override public void enterIfBody(ICSSParser.IfBodyContext ctx) { }
+
+	@Override public void exitIfBody(ICSSParser.IfBodyContext ctx) { }
+
+	@Override public void enterPixelLiteral(ICSSParser.PixelLiteralContext ctx) {
+		Literal pixelLiteral = new PixelLiteral(ctx.getText());
+		currentContainer.push(pixelLiteral);
+	}
+
+	@Override public void exitPixelLiteral(ICSSParser.PixelLiteralContext ctx) {
+		Literal pixelLiteral = (PixelLiteral) currentContainer.pop();
+		currentContainer.peek().addChild(pixelLiteral);
+	}
+
+	@Override public void enterPercentageLiteral(ICSSParser.PercentageLiteralContext ctx) {
+		Literal percentageLiteral = new PercentageLiteral(ctx.getText());
+		currentContainer.push(percentageLiteral);
+	}
+
+	@Override public void exitPercentageLiteral(ICSSParser.PercentageLiteralContext ctx) {
+		Literal percentageLiteral = (PercentageLiteral) currentContainer.pop();
+		currentContainer.peek().addChild(percentageLiteral);
+	}
+
+	@Override public void enterColorLiteral(ICSSParser.ColorLiteralContext ctx) {
+		Literal colorLiteral = new ColorLiteral(ctx.getText());
+		currentContainer.push(colorLiteral);
+	}
+
+	@Override public void exitColorLiteral(ICSSParser.ColorLiteralContext ctx) {
+		Literal colorLiteral = (ColorLiteral) currentContainer.pop();
+		currentContainer.peek().addChild(colorLiteral);
+	}
+
+	@Override public void enterBoolLiteral(ICSSParser.BoolLiteralContext ctx) {
+		Literal boolLiteral = new BoolLiteral(ctx.getText());
+		currentContainer.push(boolLiteral);
+	}
+
+	@Override public void exitBoolLiteral(ICSSParser.BoolLiteralContext ctx) {
+		Literal boolLiteral = (BoolLiteral) currentContainer.pop();
+		currentContainer.peek().addChild(boolLiteral);
+	}
+
+	@Override public void enterSizeCalc(ICSSParser.SizeCalcContext ctx) { }
+
+	@Override public void exitSizeCalc(ICSSParser.SizeCalcContext ctx) { }
+
 }

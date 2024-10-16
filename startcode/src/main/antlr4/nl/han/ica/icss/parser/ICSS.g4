@@ -49,8 +49,8 @@ ASSIGNMENT_OPERATOR: ':=';
 
 
 //--- PARSER: ---
-stylesheet: (stylerule | variable)* EOF;
-stylerule: selector OPEN_BRACE (declaration | variable | ifClause)* CLOSE_BRACE;
+stylesheet: (stylerule | variableAssignment)* EOF;
+stylerule: selector OPEN_BRACE (declaration | variableAssignment | ifClause)* CLOSE_BRACE;
 
 selector: tagSelector | idSelector | classSelector;
 tagSelector: LOWER_IDENT;
@@ -61,13 +61,12 @@ declaration: propertyName COLON propertyValue SEMICOLON;
 propertyName: WIDTH_PROP | HEIGHT_PROP | COLOR_PROP | BGCOLOR_PROP;
 propertyValue: value | variableReference;
 
-variable: variableReference ASSIGNMENT_OPERATOR variableAssignment SEMICOLON;
+variableAssignment: variableReference ASSIGNMENT_OPERATOR (value | variableReference)* SEMICOLON;
 variableReference: CAPITAL_IDENT;
-variableAssignment: propertyValue;
 
-ifClause: IF expression ifBody elseClause?;
+ifClause: IF boolExpression ifBody elseClause?;
 elseClause: ELSE ifBody;
-expression: BOX_BRACKET_OPEN (boolLiteral | variableReference) BOX_BRACKET_CLOSE;
+boolExpression: BOX_BRACKET_OPEN (boolLiteral | variableReference) BOX_BRACKET_CLOSE;
 ifBody: OPEN_BRACE (declaration | ifClause)* CLOSE_BRACE;
 
 value: size | colorLiteral | boolLiteral;
