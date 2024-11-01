@@ -74,8 +74,9 @@ pixelLiteral: PIXELSIZE;
 percentageLiteral: PERCENTAGE;
 colorLiteral: COLOR;
 boolLiteral: TRUE | FALSE;
+scalarLiteral: SCALAR;
 
-operation: operation MUL operation #mulOperation |
-            operation PLUS operation #plusOperation |
-            operation MIN operation #minOperation |
-            variableReference | pixelLiteral | percentageLiteral | SCALAR;
+operation: (variableReference | pixelLiteral | percentageLiteral | scalarLiteral) #singleValue |
+            operation PLUS operation #addOperation |
+            operation MIN operation #subOperation |
+            operation MUL operation #mulOperation;
