@@ -186,28 +186,114 @@ public class Checker {
     }
 
     private ExpressionType checkOperation(Operation node) {
+        ExpressionType type = ExpressionType.UNDEFINED;
+        ExpressionType typeL = ExpressionType.UNDEFINED;
+        ExpressionType typeR = ExpressionType.UNDEFINED;
+
         if (node.lhs instanceof BoolLiteral || node.lhs instanceof ColorLiteral || node.rhs instanceof BoolLiteral || node.rhs instanceof ColorLiteral) {
             node.setError("Can't use boolean expressions or colors in operations");
         }
-        if (node.getNodeLabel().equals("Add") || node.getNodeLabel().equals("Subtract")) {
-            boolean wrongAddOrSub = false;
-            if (node.lhs instanceof PercentageLiteral && !(node.rhs instanceof PercentageLiteral)) {
-                wrongAddOrSub = true;
-            } else if (node.lhs instanceof PixelLiteral && !(node.rhs instanceof PixelLiteral)) {
-                wrongAddOrSub = true;
-            } else if (node.lhs instanceof ScalarLiteral && !(node.rhs instanceof ScalarLiteral)) {
-                wrongAddOrSub = true;
+
+        if (node.lhs instanceof VariableReference) {
+            boolean variableExists = false;
+            boolean variableValid = false;
+            for (int i = variableTypes.getSize(); i > 0; i--) {
+                if (variableTypes.get(i).containsKey(((VariableReference) node.lhs).name)) {
+                    variableExists = true;
+                    if ((ExpressionType.PIXEL.equals(variableTypes.get(i).get(((VariableReference) node.lhs).name)))) {
+                        variableValid = true;
+                        typeL = ExpressionType.PIXEL;
+                    } else if ((ExpressionType.PERCENTAGE.equals(variableTypes.get(i).get(((VariableReference) node.lhs).name)))) {
+                        variableValid = true;
+                        typeL = ExpressionType.PERCENTAGE;
+                    } else if ((ExpressionType.SCALAR.equals(variableTypes.get(i).get(((VariableReference) node.lhs).name)))) {
+                        variableValid = true;
+                        typeL = ExpressionType.SCALAR;
+                    }
+                }
             }
-            if (wrongAddOrSub) {
-                node.setError("Can't add or subtract different value types");
+            if (!variableValid) {
+                node.setError("Variable " + ((VariableReference) node.lhs).name + " has invalid type");
             }
-        } else if (node.getNodeLabel().equals("Multiply")) {
-            if (!(node.lhs instanceof ScalarLiteral || node.rhs instanceof ScalarLiteral)) {
-                node.setError("Need at least one scalar operant to multiply");
+            if (!variableExists) {
+                node.setError("Variable " + ((VariableReference) node.lhs).name + " does not exist in used scope");
+            }
+        }
+        if (node.rhs instanceof VariableReference) {
+            boolean variableExists = false;
+            boolean variableValid = false;
+            for (int i = variableTypes.getSize(); i > 0; i--) {
+                if (variableTypes.get(i).containsKey(((VariableReference) node.rhs).name)) {
+                    variableExists = true;
+                    if ((ExpressionType.PIXEL.equals(variableTypes.get(i).get(((VariableReference) node.rhs).name)))) {
+                        variableValid = true;
+                        typeL = ExpressionType.PIXEL;
+                    } else if ((ExpressionType.PERCENTAGE.equals(variableTypes.get(i).get(((VariableReference) node.rhs).name)))) {
+                        variableValid = true;
+                        typeL = ExpressionType.PERCENTAGE;
+                    } else if ((ExpressionType.SCALAR.equals(variableTypes.get(i).get(((VariableReference) node.rhs).name)))) {
+                        variableValid = true;
+                        typeL = ExpressionType.SCALAR;
+                    }
+                }
+            }
+            if (!variableValid) {
+                node.setError("Variable " + ((VariableReference) node.rhs).name + " has invalid type");
+            }
+            if (!variableExists) {
+                node.setError("Variable " + ((VariableReference) node.rhs).name + " does not exist in used scope");
             }
         }
 
-        return null;
+        if (node.lhs instanceof Operation) {
+            typeL = checkOperation((Operation) node.lhs);
+        }
+        if (node.rhs instanceof Operation) {
+            typeR = checkOperation((Operation) node.rhs);
+        }
+        if (node.lhs instanceof PercentageLiteral) {
+            typeL = ExpressionType.PERCENTAGE;
+        }
+        if (node.rhs instanceof PercentageLiteral) {
+            typeR = ExpressionType.PERCENTAGE;
+        }
+        if (node.lhs instanceof PixelLiteral) {
+            typeL = ExpressionType.PIXEL;
+        }
+        if (node.rhs instanceof PixelLiteral) {
+            typeR = ExpressionType.PIXEL;
+        }
+        if (node.lhs instanceof ScalarLiteral) {
+            typeL = ExpressionType.SCALAR;
+        }
+        if (node.rhs instanceof ScalarLiteral) {
+            typeR = ExpressionType.SCALAR;
+        }
+
+        if (typeL == ExpressionType.PIXEL || typeR == ExpressionType.PIXEL) {
+            if (typeL == ExpressionType.PERCENTAGE || typeR == ExpressionType.PERCENTAGE) {
+                node.setError("Can't use pixels and percentages in same operations");
+            }
+        }
+
+        if (node.getNodeLabel().equals("Add") || node.getNodeLabel().equals("Subtract")) {
+            if (typeL != typeR) {
+                node.setError("Can't add or subtract different value types");
+            }
+        } else if (node.getNodeLabel().equals("Multiply")) {
+            if (typeL != ExpressionType.SCALAR && typeR != ExpressionType.SCALAR) {
+                node.setError("Need at least one scalar value to multiply");
+            }
+        }
+        if (typeL == ExpressionType.SCALAR && typeR == ExpressionType.SCALAR) {
+            type = ExpressionType.SCALAR;
+        } else if (typeL == ExpressionType.PIXEL || typeR == ExpressionType.PIXEL) {
+            type = ExpressionType.PIXEL;
+        } else if (typeL == ExpressionType.PERCENTAGE || typeR == ExpressionType.PERCENTAGE) {
+            type = ExpressionType.PERCENTAGE;
+        }
+
+        return type;
     }
 
 }
