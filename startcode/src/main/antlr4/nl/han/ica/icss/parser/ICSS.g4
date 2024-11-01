@@ -67,7 +67,7 @@ variableReference: CAPITAL_IDENT;
 ifClause: IF boolExpression ifBody elseClause?;
 elseClause: ELSE ifBody;
 boolExpression: BOX_BRACKET_OPEN (boolLiteral | variableReference) BOX_BRACKET_CLOSE;
-ifBody: OPEN_BRACE (declaration | ifClause)* CLOSE_BRACE;
+ifBody: OPEN_BRACE (declaration | variableAssignment | ifClause)* CLOSE_BRACE;
 
 literal: pixelLiteral | percentageLiteral | colorLiteral | boolLiteral;
 pixelLiteral: PIXELSIZE;
@@ -77,6 +77,7 @@ boolLiteral: TRUE | FALSE;
 scalarLiteral: SCALAR;
 
 operation: (variableReference | pixelLiteral | percentageLiteral | scalarLiteral) #singleValue |
+            operation MUL operation #mulOperation |
             operation PLUS operation #addOperation |
-            operation MIN operation #subOperation |
-            operation MUL operation #mulOperation;
+            operation MIN operation #subOperation;
+
