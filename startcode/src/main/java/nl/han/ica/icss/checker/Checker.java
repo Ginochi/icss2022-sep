@@ -186,6 +186,27 @@ public class Checker {
     }
 
     private ExpressionType checkOperation(Operation node) {
+        if (node.lhs instanceof BoolLiteral || node.lhs instanceof ColorLiteral || node.rhs instanceof BoolLiteral || node.rhs instanceof ColorLiteral) {
+            node.setError("Can't use boolean expressions or colors in operations");
+        }
+        if (node.getNodeLabel().equals("Add") || node.getNodeLabel().equals("Subtract")) {
+            boolean wrongAddOrSub = false;
+            if (node.lhs instanceof PercentageLiteral && !(node.rhs instanceof PercentageLiteral)) {
+                wrongAddOrSub = true;
+            } else if (node.lhs instanceof PixelLiteral && !(node.rhs instanceof PixelLiteral)) {
+                wrongAddOrSub = true;
+            } else if (node.lhs instanceof ScalarLiteral && !(node.rhs instanceof ScalarLiteral)) {
+                wrongAddOrSub = true;
+            }
+            if (wrongAddOrSub) {
+                node.setError("Can't add or subtract different value types");
+            }
+        } else if (node.getNodeLabel().equals("Multiply")) {
+            if (!(node.lhs instanceof ScalarLiteral || node.rhs instanceof ScalarLiteral)) {
+                node.setError("Need at least one scalar operant to multiply");
+            }
+        }
+
         return null;
     }
 
